@@ -22,18 +22,40 @@ const RegisterPage = ({ navigation }) => {
       return;
     }
 
-    if (password.length < 6) {
-      Alert.alert("Error", "Password must be at least 6 characters");
+    if (password.length < 7) {
+      Alert.alert("Error", "Password must be at least 7 characters");
       return;
     }
     console.log("Registering new user:", { username, employeeId });
+
+    // Password Validation: Should have at least one lowercase, one uppercase, one number, one special character, and be at least 8 characters long
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      Alert.alert(
+        "Error",
+        "Password must be at least 8 characters, include an uppercase letter, a lowercase letter, a number, and a special character."
+      );
+      return;
+    }
+    if (!employeeId || isNaN(employeeId)) {
+      Alert.alert("Error", "Please enter a valid Employee ID");
+      return;
+    }
+
+    // Proceed to register (send data to backend)
+    const registerData = {
+      UserName: username,
+      Password: password,
+      HREmployeeId: parseInt(employeeId), // Ensure it's an integer
+    };
+
+    console.log("Registering new user:", registerData);
+    // Call your API here to register the user
   };
 
   return (
-    <LinearGradient
-    colors={['#1e3c72', '#2a5298']} 
-    style={styles.container}
-    >
+    <LinearGradient colors={["#1e3c72", "#2a5298"]} style={styles.container}>
       <Text style={styles.title}>Register</Text>
 
       <View style={styles.inputContainer}>
@@ -136,8 +158,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     width: "100%",
     height: 55,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   icon: {
     marginRight: 10,
@@ -147,7 +168,7 @@ const styles = StyleSheet.create({
     height: "100%",
     fontFamily: "Roboto",
     fontSize: 16,
-    color: 'white',
+    color: "white",
   },
   eyeIcon: {
     padding: 5,
@@ -155,7 +176,7 @@ const styles = StyleSheet.create({
   button: {
     padding: 15,
     borderRadius: 12,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     alignItems: "center",
     width: "100%",
     marginTop: 20,
@@ -163,9 +184,8 @@ const styles = StyleSheet.create({
   buttonText: {
     fontWeight: "bold",
     fontSize: 18,
-    color: '#1e3c72',
-
-   },
+    color: "#1e3c72",
+  },
   footer: {
     flexDirection: "row",
     marginTop: 30,

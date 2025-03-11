@@ -1,53 +1,118 @@
-import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Alert,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
 
 const LoginPage = () => {
   const navigation = useNavigation();
 
+  // State variables
+  const [username, setUsername] = useState({});
+  const [password, setPassword] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Handle login
+  const handleLogin = () => {
+    // Validate the fields
+    if (!username || !password) {
+      Alert.alert("Error", "Please fill in both fields");
+      return;
+    }
+
+    // Username validation (ensure username is at least 7 characters)
+    if (username.length < 7) {
+      Alert.alert("Error", "Username must be at least 7 characters");
+      return;
+    }
+
+    // Password validation (strong password rules)
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      Alert.alert(
+        "Error",
+        "Password must be at least 8 characters, include an uppercase letter, a lowercase letter, a number, and a special character."
+      );
+      return;
+    }
+
+    console.log("Logging in:", { username, password });
+    // Make API request for login here
+  };
+
   return (
-    <LinearGradient 
-      colors={['#1e3c72', '#2a5298']} // Professional blue gradient
+    <LinearGradient
+      colors={["#1e3c72", "#2a5298"]} // Professional blue gradient
       style={styles.container}
     >
       <Text style={styles.title}>Login</Text>
-      
-      <View style={styles.inputContainer}>
-      <Ionicons name="person-outline" size={20} color="#aaa" style={styles.icon} />
 
-        <TextInput 
-          style={styles.input}
-          placeholder='Username'
-          placeholderTextColor="#aaa"
+      <View style={styles.inputContainer}>
+        <Ionicons
+          name="person-outline"
+          size={20}
+          color="#aaa"
+          style={styles.icon}
         />
-        
+
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          placeholderTextColor="#aaa"
+          value={username}
+          onChangeText={setUsername}
+        />
+
         {/* <Ionicons name="person-outline" size={20} color="#aaa" style={styles.icon} /> */}
       </View>
 
       <View style={styles.inputContainer}>
-      <Ionicons name="lock-closed-outline" size={20} color="#aaa" style={styles.icon} />
+        <Ionicons
+          name="lock-closed-outline"
+          size={20}
+          color="#aaa"
+          style={styles.icon}
+        />
 
-        <TextInput 
+        <TextInput
           style={styles.input}
-          placeholder='Password'
+          placeholder="Password"
           placeholderTextColor="#aaa"
-          secureTextEntry
+          secureTextEntry={!showPassword}
+          value={password}
+          onChangeText={setPassword}
         />
         {/* <Ionicons name="lock-closed-outline" size={20} color="#aaa" style={styles.icon} /> */}
+        <TouchableOpacity
+          onPress={() => setShowPassword(!showPassword)}
+          style={styles.eyeIcon}
+        >
+          <Ionicons
+            name={showPassword ? "eye-outline" : "eye-off-outline"}
+            size={20}
+            color="#aaa"
+          />
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 
-            <View style={styles.footer}>
-              <Text style={styles.footerText}>Don't have an account?</Text>
-              <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-                <Text style={styles.footerLink}>Register Here</Text>
-              </TouchableOpacity>
-            </View>
-      
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Don't have an account?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+          <Text style={styles.footerLink}>Register Here</Text>
+        </TouchableOpacity>
+      </View>
     </LinearGradient>
   );
 };
@@ -56,44 +121,44 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
     marginBottom: 40,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: 15,
     marginBottom: 15,
     paddingHorizontal: 15,
-    width: '100%',
+    width: "100%",
     height: 55,
   },
   input: {
     flex: 1,
-    height: '100%',
+    height: "100%",
     fontSize: 16,
-    color: 'white',
+    color: "white",
     marginLeft: 10,
   },
   icon: {
     marginRight: 10,
   },
   button: {
-    width: '100%',
+    width: "100%",
     height: 55,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -103,27 +168,28 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: {
-    color: '#1e3c72',
+    color: "#1e3c72",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   forgotPassword: {
-    color: '#fff',
+    color: "#fff",
     marginTop: 15,
     fontSize: 14,
   },
   registerContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 30,
   },
   registerHint: {
-    color: '#fff',
+    color: "#fff",
   },
   registerText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    textDecorationLine: 'underline',
-  },  footer: {
+    color: "#fff",
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+  },
+  footer: {
     flexDirection: "row",
     marginTop: 30,
     gap: 10,
@@ -138,7 +204,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textDecorationLine: "underline",
   },
-
 });
 
 export default LoginPage;
