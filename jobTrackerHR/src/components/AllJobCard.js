@@ -25,13 +25,13 @@
 
 // export default AllJobCard
 
-// const styles = StyleSheet.create({ 
+// const styles = StyleSheet.create({
 //     card: {
-//     alignSelf: 'center', 
+//     alignSelf: 'center',
 //     borderRadius: 15,
 //     padding: 20,
 //     marginVertical: 10,
-//     width: '90%', 
+//     width: '90%',
 //     borderWidth: 1,
 //     borderColor: '#746574',
 //     shadowColor: '#000',
@@ -66,85 +66,89 @@
 //     marginRight: 10
 // },
 // })
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
-import { MaterialIcons } from '@expo/vector-icons';
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const AllJobCard = ({ job }) => {
-    return (
-        <View style={styles.card}>
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>{job.title}</Text>
-                <View style={styles.infoRow}>
-                    <MaterialIcons name="title" size={20} color="#666" />
-                    <Text style={styles.infoText}>Job Title: {job.title}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <MaterialIcons name="description" size={20} color="#666" />
-                    <Text style={styles.infoText}>Description: {job.description}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <MaterialIcons name="attach-money" size={20} color="#666" />
-                    <Text style={styles.infoText}>Salary: {job.salary}</Text>
-                </View>
-            </View>
-
-            <TouchableOpacity style={styles.viewApplicantsButton}>
-                <Text style={styles.buttonText}>View Applicants</Text>
-            </TouchableOpacity>
+  //   const { data, isLoading } = useQuery({
+  //     queryKey: ["GetAllCategories"],
+  //     queryFn: getAllCategories,
+  //   });
+  return (
+    <View style={styles.card}>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{job.title}</Text>
+        <View style={styles.infoRow}>
+          <MaterialIcons name="title" size={20} color="#666" />
+          <Text style={styles.infoText}>Job Title: {job.title}</Text>
         </View>
-    );
+        <View style={styles.infoRow}>
+          <MaterialIcons name="description" size={20} color="#666" />
+          <Text style={styles.infoText}>Description: {job.description}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <MaterialIcons name="attach-money" size={20} color="#666" />
+          <Text style={styles.infoText}>Salary: {job.salary}</Text>
+        </View>
+      </View>
+
+      <TouchableOpacity style={styles.viewApplicantsButton}>
+        <Text style={styles.buttonText}>View Applicants</Text>
+      </TouchableOpacity>
+    </View>
+  );
 };
 
 export default AllJobCard;
 
 const styles = StyleSheet.create({
-    card: {
-        backgroundColor: "#fff",
-        borderRadius: 15,
-        marginVertical: 10,
-        marginHorizontal: 15,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3.84,
-        elevation: 5,
-        padding: 20,
-    },
-    section: {
-        marginBottom: 15,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: "#333",
-        marginBottom: 10,
-    },
-    infoRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: 8,
-        gap: 10,
-    },
-    infoText: {
-        fontSize: 16,
-        color: "#666",
-    },
-    viewApplicantsButton: {
-        // backgroundColor: "#4158D0",
-        backgroundColor : '#4CAF50',
-        padding: 15,
-        borderRadius: 12,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-    },
-    buttonText: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "bold",
-    },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    marginVertical: 10,
+    marginHorizontal: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+    padding: 20,
+  },
+  section: {
+    marginBottom: 15,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
+  },
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+    gap: 10,
+  },
+  infoText: {
+    fontSize: 16,
+    color: "#666",
+  },
+  viewApplicantsButton: {
+    // backgroundColor: "#4158D0",
+    backgroundColor: "#4CAF50",
+    padding: 15,
+    borderRadius: 12,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });

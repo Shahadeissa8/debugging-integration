@@ -8,11 +8,15 @@ import { StyleSheet, Text, View } from "react-native";
 // import ApplicantsDetails from './screens/ApplicantsDetails';
 import MainNavigator from "./src/navigation/MainNavigator";
 import { NavigationContainer } from "@react-navigation/native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export default function App() {
+  const queryClient = new QueryClient();
   return (
     <NavigationContainer>
-      <MainNavigator />
+      <QueryClientProvider client={queryClient}>
+        <MainNavigator />
+      </QueryClientProvider>
     </NavigationContainer>
   );
 }

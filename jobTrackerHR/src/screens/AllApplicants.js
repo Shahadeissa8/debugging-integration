@@ -4,6 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import AllApplicantsCard from "../components/AllApplicantsCard";
 import { ActivityIndicator } from "react-native-paper";
 import { getPendingApplications } from "../api/applicationAPI";
+import { useQuery } from "@tanstack/react-query";
 
 // const applicant = [
 //   {
@@ -31,12 +32,20 @@ import { getPendingApplications } from "../api/applicationAPI";
 // ];
 
 const AllApplicants = () => {
-  const [applicants, setApplicants] = useState([]);
+  //   const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchApplicants();
-  }, []);
+  //   useEffect(() => {
+  //     fetchApplicants();
+  //   }, []);
+
+  const { data: applicants } = useQuery({
+    queryKey: ["getPendingApplicants"],
+    queryFn: () => getPendingApplications(),
+    onSuccess: () => {
+      setLoading(false);
+    },
+  });
 
   const fetchApplicants = async () => {
     try {
@@ -62,12 +71,14 @@ const AllApplicants = () => {
       {loading ? (
         <ActivityIndicator size="large" color="#3b5998" />
       ) : (
-        <FlatList
-          data={applicants}
-          renderItem={({ item }) => <AllApplicantsCard applicant={item} />}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={styles.list}
-        />
+        applicants && (
+          <FlatList
+            data={applicants}
+            renderItem={({ item }) => <AllApplicantsCard applicant={item} />}
+            keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={styles.list}
+          />
+        )
       )}
     </View>
     // </LinearGradient>

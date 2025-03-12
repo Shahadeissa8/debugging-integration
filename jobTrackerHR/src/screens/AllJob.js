@@ -98,41 +98,186 @@
 //     },
 // });
 
-import { FlatList, StyleSheet, View, Text } from "react-native";
+// import { FlatList, StyleSheet, View, Text } from "react-native";
+// import React, { useState, useCallback } from "react";
+// import AllJobCard from "../components/AllJobCard";
+// import { Searchbar, Chip } from "react-native-paper";
+// import { LinearGradient } from "expo-linear-gradient";
+
+// const AllJob = () => {
+//   const [searchQuery, setSearchQuery] = useState("");
+//   const [selectedFilter, setSelectedFilter] = useState("all");
+//   const [jobs, setJobs] = useState([
+//     {
+//       id: 1,
+//       title: "IT Officer",
+//       description: "develop fullstack applications",
+//       salary: "2000",
+//       category: "IT",
+//     },
+//     {
+//       id: 2,
+//       title: "Salary Officer",
+//       description: "check all salaries",
+//       salary: "1240",
+//       category: "Finance",
+//     },
+//     {
+//       id: 3,
+//       title: "IT Officer",
+//       description: "develop fullstack applications",
+//       salary: "2000",
+//       category: "IT",
+//     },
+//   ]);
+
+//   const filters = ["all", "IT", "Finance"];
+
+//   const getFilteredJobs = useCallback(() => {
+//     return jobs.filter((job) => {
+//       const matchesSearch = job.title
+//         .toLowerCase()
+//         .includes(searchQuery.toLowerCase());
+//       const matchesFilter =
+//         selectedFilter === "all" || job.category === selectedFilter;
+//       return matchesSearch && matchesFilter;
+//     });
+//   }, [searchQuery, selectedFilter, jobs]);
+
+//   const renderEmptyList = () => (
+//     <View style={styles.emptyContainer}>
+//       <Text style={styles.emptyText}>No jobs found</Text>
+//     </View>
+//   );
+
+//   return (
+//     <LinearGradient colors={["#f6f6f6", "#ffffff"]} style={styles.container}>
+//       <View style={styles.searchContainer}>
+//         <Searchbar
+//           placeholder="Search jobs..."
+//           onChangeText={setSearchQuery}
+//           value={searchQuery}
+//           style={styles.searchBar}
+//           iconColor="#666"
+//           inputStyle={styles.searchInput}
+//         />
+
+//         <View style={styles.filterContainer}>
+//           {filters.map((filter) => (
+//             <Chip
+//               key={filter}
+//               selected={selectedFilter === filter}
+//               onPress={() => setSelectedFilter(filter)}
+//               style={[
+//                 styles.filterChip,
+//                 selectedFilter === filter && styles.selectedChip,
+//               ]}
+//               textStyle={[
+//                 styles.filterChipText,
+//                 selectedFilter === filter && styles.selectedChipText,
+//               ]}
+//             >
+//               {filter.charAt(0).toUpperCase() + filter.slice(1)}
+//             </Chip>
+//           ))}
+//         </View>
+//       </View>
+
+//       <FlatList
+//         data={getFilteredJobs()}
+//         renderItem={({ item }) => <AllJobCard job={item} />}
+//         keyExtractor={(item) => item.id.toString()}
+//         contentContainerStyle={styles.listContainer}
+//         ListEmptyComponent={renderEmptyList}
+//         showsVerticalScrollIndicator={false}
+//       />
+//     </LinearGradient>
+//   );
+// };
+
+// export default AllJob;
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//   },
+//   searchContainer: {
+//     padding: 15,
+//     backgroundColor: "transparent",
+//   },
+//   searchBar: {
+//     elevation: 2,
+//     borderRadius: 10,
+//     backgroundColor: "white",
+//     marginBottom: 10,
+//   },
+//   searchInput: {
+//     fontSize: 16,
+//   },
+//   filterContainer: {
+//     flexDirection: "row",
+//     gap: 10,
+//     marginTop: 10,
+//   },
+//   filterChip: {
+//     backgroundColor: "#f0f0f0",
+//   },
+//   selectedChip: {
+//     backgroundColor: "#2a5298",
+//   },
+//   filterChipText: {
+//     color: "#666",
+//   },
+//   selectedChipText: {
+//     color: "white",
+//   },
+//   listContainer: {
+//     padding: 15,
+//     gap: 10,
+//   },
+//   emptyContainer: {
+//     flex: 1,
+//     alignItems: "center",
+//     justifyContent: "center",
+//     paddingTop: 50,
+//   },
+//   emptyText: {
+//     fontSize: 16,
+//     color: "#666",
+//   },
+// });
+
+import {
+  FlatList,
+  StyleSheet,
+  View,
+  Text,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import AllJobCard from "../components/AllJobCard";
 import { Searchbar, Chip } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
+import { getActiveJobs } from "../api/jobsAPI";
 
 const AllJob = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState({});
   const [selectedFilter, setSelectedFilter] = useState("all");
-  const [jobs, setJobs] = useState([
-    {
-      id: 1,
-      title: "IT Officer",
-      description: "develop fullstack applications",
-      salary: "2000",
-      category: "IT",
-    },
-    {
-      id: 2,
-      title: "Salary Officer",
-      description: "check all salaries",
-      salary: "1240",
-      category: "Finance",
-    },
-    {
-      id: 3,
-      title: "IT Officer",
-      description: "develop fullstack applications",
-      salary: "2000",
-      category: "IT",
-    },
-  ]);
+
+  // Fetch jobs from API using React Query
+  const {
+    data: jobs = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["activeJobs"],
+    queryFn: getActiveJobs,
+  });
 
   const filters = ["all", "IT", "Finance"];
 
+  // Filter jobs based on search and category
   const getFilteredJobs = useCallback(() => {
     return jobs.filter((job) => {
       const matchesSearch = job.title
@@ -149,6 +294,24 @@ const AllJob = () => {
       <Text style={styles.emptyText}>No jobs found</Text>
     </View>
   );
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2a5298" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>
+          Failed to load jobs. Try again later.
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <LinearGradient colors={["#f6f6f6", "#ffffff"]} style={styles.container}>
@@ -186,7 +349,7 @@ const AllJob = () => {
       <FlatList
         data={getFilteredJobs()}
         renderItem={({ item }) => <AllJobCard job={item} />}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.jobId.toString()}
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={renderEmptyList}
         showsVerticalScrollIndicator={false}
@@ -198,51 +361,29 @@ const AllJob = () => {
 export default AllJob;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  searchContainer: {
-    padding: 15,
-    backgroundColor: "transparent",
-  },
+  container: { flex: 1 },
+  searchContainer: { padding: 15, backgroundColor: "transparent" },
   searchBar: {
     elevation: 2,
     borderRadius: 10,
     backgroundColor: "white",
     marginBottom: 10,
   },
-  searchInput: {
-    fontSize: 16,
-  },
-  filterContainer: {
-    flexDirection: "row",
-    gap: 10,
-    marginTop: 10,
-  },
-  filterChip: {
-    backgroundColor: "#f0f0f0",
-  },
-  selectedChip: {
-    backgroundColor: "#2a5298",
-  },
-  filterChipText: {
-    color: "#666",
-  },
-  selectedChipText: {
-    color: "white",
-  },
-  listContainer: {
-    padding: 15,
-    gap: 10,
-  },
+  searchInput: { fontSize: 16 },
+  filterContainer: { flexDirection: "row", gap: 10, marginTop: 10 },
+  filterChip: { backgroundColor: "#f0f0f0" },
+  selectedChip: { backgroundColor: "#2a5298" },
+  filterChipText: { color: "#666" },
+  selectedChipText: { color: "white" },
+  listContainer: { padding: 15, gap: 10 },
   emptyContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     paddingTop: 50,
   },
-  emptyText: {
-    fontSize: 16,
-    color: "#666",
-  },
+  emptyText: { fontSize: 16, color: "#666" },
+  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
+  errorContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
+  errorText: { fontSize: 16, color: "red" },
 });
