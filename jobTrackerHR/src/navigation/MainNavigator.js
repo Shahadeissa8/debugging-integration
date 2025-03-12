@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AllApplicants from "../screens/AllApplicants";
 import AllJob from "../screens/AllJob";
@@ -11,8 +11,10 @@ import {
   HeaderShownContext,
 } from "@react-navigation/elements";
 import ApplicantsDetails from "../screens/ApplicantsDetails";
+import UserContext from "../context/UserContext";
 const Tab = createBottomTabNavigator();
 const MainNavigator = () => {
+  const { isAuth, setIsAuth } = useContext(UserContext);
   return (
     <Tab.Navigator>
       <Tab.Screen name="All Applicants" component={AllApplicants} />

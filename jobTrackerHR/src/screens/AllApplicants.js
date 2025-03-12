@@ -35,9 +35,9 @@ const AllApplicants = () => {
   //   const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  //   useEffect(() => {
-  //     fetchApplicants();
-  //   }, []);
+  // useEffect(() => {
+  //   fetchApplicants();
+  // }, []);
 
   const { data: applicants } = useQuery({
     queryKey: ["getPendingApplicants"],

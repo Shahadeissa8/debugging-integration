@@ -9,13 +9,21 @@ import { StyleSheet, Text, View } from "react-native";
 import MainNavigator from "./src/navigation/MainNavigator";
 import { NavigationContainer } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import AuthNavigator from "./src/navigation/AuthNavigator";
+import UserContext from "./src/context/UserContext";
+import { useState } from "react";
 
 export default function App() {
   const queryClient = new QueryClient();
+  const [isAuth, setIsAuth] = useState(false);
   return (
     <NavigationContainer>
       <QueryClientProvider client={queryClient}>
-        <MainNavigator />
+        <UserContext.Provider value={{ isAuth, setIsAuth }}>
+          {/* <MainNavigator /> */}
+          {/* <AuthNavigator/> */}
+          {isAuth ? <MainNavigator /> : <AuthNavigator />}
+        </UserContext.Provider>
       </QueryClientProvider>
     </NavigationContainer>
   );
