@@ -8,124 +8,100 @@ import {
   View,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigation } from "@react-navigation/native";
+import UserContext from "../context/UserContext";
 
-const RegisterPage = ({ navigation }) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [employeeId, setEmployeeId] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleRegister = () => {
-    if (!username || !password || !employeeId) {
-      Alert.alert("Error", "Please fill in all fields");
-      return;
-    }
-
-    if (password.length < 7) {
-      Alert.alert("Error", "Password must be at least 7 characters");
-      return;
-    }
-    console.log("Registering new user:", { username, employeeId });
-
-    // Password Validation: Should have at least one lowercase, one uppercase, one number, one special character, and be at least 8 characters long
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(password)) {
-      Alert.alert(
-        "Error",
-        "Password must be at least 8 characters, include an uppercase letter, a lowercase letter, a number, and a special character."
-      );
-      return;
-    }
-    if (!employeeId || isNaN(employeeId)) {
-      Alert.alert("Error", "Please enter a valid Employee ID");
-      return;
-    }
-
-    // Proceed to register (send data to backend)
-    const registerData = {
-      UserName: username,
-      Password: password,
-      HREmployeeId: parseInt(employeeId), // Ensure it's an integer
-    };
-
-    console.log("Registering new user:", registerData);
-    // Call your API here to register the user
-  };
-
+const RegisterPage = () => {
+  const navigation = useNavigation();
+  const [userInfo, setUserInfo] = useState({});
+  const [image, setImage] = useState("");
+  const { isAuth, setIsAuth } = useContext(UserContext);
+  const { mutate } = useMutation({
+    mutationKey: ["register"],
+    mutationFn: () => register(userInfo, image),
+    onSuccess: () => {
+      alert("Account created");
+      setIsAuth(true);
+    },
+    onError: () => {
+      alert("Error in creating account");
+    },
+  });
   return (
-    <LinearGradient colors={["#1e3c72", "#2a5298"]} style={styles.container}>
-      <Text style={styles.title}>Register</Text>
+    <LinearGradient
+      colors={["#1e3c72", "#2a5298"]} // Professional blue gradient
+      style={styles.container}
+    >
+      <Text style={styles.title}>register</Text>
 
       <View style={styles.inputContainer}>
         <Ionicons
           name="person-outline"
           size={20}
-          color="#888"
+          color="#aaa"
           style={styles.icon}
         />
+
         <TextInput
           style={styles.input}
           placeholder="Username"
           placeholderTextColor="#888"
-          value={username}
-          onChangeText={setUsername}
+          // value="Username"
+          onChangeText={(value) => {
+            setUserInfo({ ...userInfo, UserName: value });
+          }}
         />
       </View>
-
       <View style={styles.inputContainer}>
         <Ionicons
           name="lock-closed-outline"
           size={20}
-          color="#888"
+          color="#aaa"
           style={styles.icon}
         />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#888"
-          secureTextEntry={!showPassword}
-          value={password}
-          onChangeText={setPassword}
-        />
-        <TouchableOpacity
-          onPress={() => setShowPassword(!showPassword)}
-          style={styles.eyeIcon}
-        >
-          <Ionicons
-            name={showPassword ? "eye-outline" : "eye-off-outline"}
-            size={20}
-            color="#888"
-          />
-        </TouchableOpacity>
-      </View>
 
+        <TextInput
+          style={styles.password}
+          placeholder="Enter Your Password"
+          placeholderTextColor="#888"
+          onChangeText={(value) => {
+            setUserInfo({ ...userInfo, Password: value });
+          }}
+        />
+      </View>
       <View style={styles.inputContainer}>
         <Ionicons
-          name="clipboard-outline"
+          name="accessibility-outline"
           size={20}
-          color="#888"
+          color="#aaa"
           style={styles.icon}
         />
+
         <TextInput
-          style={styles.input}
-          placeholder="Employee ID"
+          style={styles.password}
+          placeholder="Enter Your HR ID"
           placeholderTextColor="#888"
-          value={employeeId}
-          onChangeText={setEmployeeId}
-          keyboardType="numeric"
+          onChangeText={(value) => {
+            setUserInfo({ ...userInfo, HREmployeeId: value });
+          }}
         />
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          console.log(userInfo);
+          mutate();
+        }}
+      >
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
-
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Already have an account?</Text>
+        <Text style={styles.footerText}>Already a user?</Text>
         <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text style={styles.footerLink}>Login</Text>
+          <Text style={styles.footerLink}>Login Here</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>
@@ -137,9 +113,8 @@ export default RegisterPage;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 200,
-    paddingBottom: 30,
     paddingHorizontal: 20,
+    justifyContent: "center",
     alignItems: "center",
   },
   title: {
@@ -147,44 +122,65 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
     marginBottom: 40,
-    textAlign: "center",
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    // backgroundColor: "#f1f1f1",
-    borderRadius: 12,
-    marginBottom: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderRadius: 15,
+    marginBottom: 15,
     paddingHorizontal: 15,
     width: "100%",
     height: 55,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-  },
-  icon: {
-    marginRight: 10,
   },
   input: {
     flex: 1,
     height: "100%",
-    fontFamily: "Roboto",
     fontSize: 16,
     color: "white",
+    marginLeft: 10,
   },
-  eyeIcon: {
-    padding: 5,
+  icon: {
+    marginRight: 10,
   },
   button: {
-    padding: 15,
-    borderRadius: 12,
-    backgroundColor: "white",
-    alignItems: "center",
     width: "100%",
+    height: 55,
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   buttonText: {
-    fontWeight: "bold",
-    fontSize: 18,
     color: "#1e3c72",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  forgotPassword: {
+    color: "#fff",
+    marginTop: 15,
+    fontSize: 14,
+  },
+  registerContainer: {
+    flexDirection: "row",
+    marginTop: 30,
+  },
+  registerHint: {
+    color: "#fff",
+  },
+  registerText: {
+    color: "#fff",
+    fontWeight: "bold",
+    textDecorationLine: "underline",
   },
   footer: {
     flexDirection: "row",
@@ -196,7 +192,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   footerLink: {
-    color: "#fff",
+    color: "lightblue",
     fontSize: 16,
     fontWeight: "bold",
     textDecorationLine: "underline",

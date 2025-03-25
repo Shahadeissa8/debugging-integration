@@ -1,211 +1,126 @@
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Animated,
-} from "react-native";
-import React, { useState } from "react";
-import { LinearGradient } from "expo-linear-gradient";
+import React from "react";
+import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native";
 
 const AllApplicantsCard = ({ applicant }) => {
-  const [isPressed, setIsPressed] = useState(false);
+  const navigation = useNavigation();
+
+  // const handleApplicantPress = (ApplicationId) => {
+  //   // Navigate to the details page, passing the applicationId
+  //   navigation.navigate("ApplicantsDetails", { applicant });
+  //   console.log("Applicant ID:", ApplicationId);
+  //   console.log("Applicant:", applicant);
+  // };
 
   return (
-    <Animated.View style={[styles.card, isPressed && styles.cardPressed]}>
+    <View style={styles.card}>
       <LinearGradient
         colors={["rgba(255,255,255,0.1)", "rgba(255,255,255,0.05)"]}
         style={styles.gradientOverlay}
       >
         <View style={styles.imageWrapper}>
           <Image
-            source={{ uri: applicant.ApplicantImage }}
-            style={styles.imageContainer}
-            resizeMode="cover"
+            source={{ uri: applicant.applicantImage }}
+            style={styles.image}
           />
-          <View style={styles.statusIndicator} />
         </View>
 
         <View style={styles.infoContainer}>
-          <Text style={styles.applicantName}>{applicant.ApplicantName}</Text>
+          <Text style={styles.name}>{applicant.applicantName}</Text>
 
-          <View style={styles.majorContainer}>
+          <View style={styles.row}>
             <MaterialIcons name="school" size={20} color="#666" />
-            <Text style={styles.major}>{applicant.ApplicantMajor}</Text>
+            <Text style={styles.text}>{applicant.applicantMajor}</Text>
           </View>
 
-          <View style={styles.skillsContainer}>
-            {applicant.ApplicantSkills.split(",").map((skill, index) => (
-              <View key={index} style={styles.skillBadge}>
-                <Text style={styles.skillText}>{skill.trim()}</Text>
-              </View>
-            ))}
+          <View style={styles.row}>
+            <MaterialIcons name="star" size={20} color="#666" />
+            <Text style={styles.text}>{applicant.applicantSkills}</Text>
           </View>
 
-          <View style={styles.dobContainer}>
+          <View style={styles.row}>
             <MaterialIcons name="cake" size={18} color="#888" />
-            <Text style={styles.dob}>{applicant.ApplicantDOB}</Text>
+            <Text style={styles.text}>
+              {new Date(applicant.applicantDOB).toDateString()}
+            </Text>
           </View>
 
-          <View style={styles.buttonContainer}>
+          <View style={styles.buttonsContainer}>
             <TouchableOpacity
-              style={styles.viewButton}
-              onPress={() => setIsPressed(true)}
+              style={styles.viewApplicantsButton}
+              onPress={() =>
+                navigation.navigate("ApplicantsDetails", { applicant })
+              } // Use handleApplicantPress here
             >
-              <MaterialIcons name="visibility" size={20} color="#fff" />
               <Text style={styles.buttonText}>View Details</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.cvButton}>
-              <MaterialIcons name="description" size={20} color="#4CAF50" />
-              <Text style={styles.cvButtonText}>View CV</Text>
             </TouchableOpacity>
           </View>
         </View>
       </LinearGradient>
-    </Animated.View>
+    </View>
   );
 };
 
-export default AllApplicantsCard;
-
 const styles = StyleSheet.create({
   card: {
-    alignSelf: "center",
-    borderRadius: 20,
+    backgroundColor: "#fff",
+    borderRadius: 15,
     marginVertical: 10,
-    width: "95%",
-    backgroundColor: "#ffffff",
+    padding: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5,
-    overflow: "hidden",
-  },
-  cardPressed: {
-    transform: [{ scale: 0.98 }],
-  },
-  gradientOverlay: {
-    padding: 15,
-  },
-  imageWrapper: {
-    position: "relative",
-    alignItems: "center",
-    marginBottom: 15,
-  },
-  imageContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 3,
-    borderColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-  },
-  statusIndicator: {
-    position: "absolute",
-    right: "30%",
-    bottom: 5,
-    width: 15,
-    height: 15,
-    borderRadius: 8,
-    backgroundColor: "#4CAF50",
-    borderWidth: 2,
-    borderColor: "#fff",
-  },
-  infoContainer: {
-    padding: 10,
-  },
-  applicantName: {
-    fontSize: 24,
-    fontWeight: "700",
-    marginBottom: 10,
-    color: "#333",
-    textAlign: "center",
-  },
-  majorContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-    justifyContent: "center",
-    gap: 8,
-  },
-  major: {
-    fontSize: 16,
-    color: "#666",
-    fontWeight: "500",
-  },
-  skillsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-    justifyContent: "center",
-    marginBottom: 15,
-  },
-  skillBadge: {
-    backgroundColor: "#f0f0f0",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 15,
-  },
-  skillText: {
-    fontSize: 13,
-    color: "#666",
-  },
-  dobContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    marginBottom: 20,
-  },
-  dob: {
-    fontSize: 14,
-    color: "#888",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 10,
-  },
-  viewButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    backgroundColor: "#4CAF50",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 6,
     elevation: 3,
   },
-  buttonText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "600",
+  imageWrapper: {
+    alignItems: "center",
+    marginBottom: 15,
   },
-  cvButton: {
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 3,
+    borderColor: "#fff",
+  },
+  row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#4CAF50",
+    marginVertical: 5,
   },
-  cvButtonText: {
-    color: "#4CAF50",
+  name: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  text: {
     fontSize: 16,
-    fontWeight: "600",
+    color: "#555",
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    marginTop: 15,
+  },
+  viewApplicantsButton: {
+    backgroundColor: "#4CAF50",
+    padding: 15,
+    borderRadius: 12,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
+
+export default AllApplicantsCard;

@@ -69,12 +69,32 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
+import AllApplicantsCard from "./AllApplicantsCard";
+import { useNavigation } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { getActiveJobs } from "../api/jobsAPI";
 
-const AllJobCard = ({ job }) => {
+const AllJobCard = ({ job, applicant }) => {
+  // console.log("job", job);
+  // console.log("applicant", applicant);
+
+  const navigation = useNavigation();
   //   const { data, isLoading } = useQuery({
   //     queryKey: ["GetAllCategories"],
   //     queryFn: getAllCategories,
   //   });
+  const [data, setJobBe, isLoading] = useState([]);
+  useEffect(() => {
+    const fetchJobs = async () => {
+      const res = await getActiveJobs();
+      setJobBe(res);
+    };
+    fetchJobs();
+  });
+
+  // if(isLoading) {<Text>Loading...</Text>}
+  // console.log("data", data);
+  // console.log("job", job);
   return (
     <View style={styles.card}>
       <View style={styles.section}>
@@ -91,11 +111,29 @@ const AllJobCard = ({ job }) => {
           <MaterialIcons name="attach-money" size={20} color="#666" />
           <Text style={styles.infoText}>Salary: {job.salary}</Text>
         </View>
+        <View style={styles.infoRow}>
+          {/* <MaterialIcons name="attach-money" size={20} color="#666" /> */}
+          <Text style={styles.infoText}>category:{job.category}</Text>
+        </View>
       </View>
 
-      <TouchableOpacity style={styles.viewApplicantsButton}>
+      {/* <TouchableOpacity
+        style={styles.viewApplicantsButton}
+        onPress={() => navigation.navigate("AllApplicants", { jobId: job.id })}
+      >
         <Text style={styles.buttonText}>View Applicants</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity
+          style={styles.viewApplicantsButton}
+          onPress={() =>
+            navigation.navigate("JobApplicants", { category: job.category })
+          } // Use handleApplicantPress here
+        >
+          <Text style={styles.buttonText}>All Applicants</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

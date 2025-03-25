@@ -592,7 +592,7 @@ const NewJobs = () => {
               onPress={handleSubmit}
             >
               <LinearGradient
-                colors={["#2a5298", "#1e3c72"]}
+                colors={["#4CAF50", "#4CAF50"]}
                 style={styles.gradient}
               >
                 <Ionicons
